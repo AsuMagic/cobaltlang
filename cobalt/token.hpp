@@ -24,21 +24,21 @@ enum class TokenType
 
 	// parenthesis '(' and ')' respectively
 	// parameter lists, either in function declarations or function calls
-	ParameterListBegin,
-	ParameterListEnd,
+	ParenLeft,
+	ParenRight,
 
 	// braces '{' and '}' respectively
 	// set of statements executed when calling a function
-	FunctionBodyBegin,
-	FunctionBodyEnd,
+	BraceLeft,
+	BraceRight,
 
 	// brackets '[' and ']' respectively
-	PropertyBodyBegin,
-	PropertyBodyEnd,
+	BracketLeft,
+	BracketRight,
 
 	// colon ':' used to separate variables or parameters from constraints,
 	// i.e. type constraint, value constraint or custom function constraint
-	TypeConstraintSeparator,
+	Colon,
 
 	// equal '=' used to assign variables or declare-assign variables or if the
 	// context allows as an identifier character

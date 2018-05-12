@@ -9,14 +9,14 @@ namespace co
 {
 constexpr std::array<std::pair<char, TokenType>, 10> char_tokens {{
 	{'\n', TokenType::EndOfLine},
-	{'(', TokenType::ParameterListBegin},
-	{')', TokenType::ParameterListEnd},
-	{'{', TokenType::FunctionBodyBegin},
-	{'}', TokenType::FunctionBodyEnd},
-	{'[', TokenType::PropertyBodyBegin},
-	{']', TokenType::PropertyBodyEnd},
+	{'(', TokenType::ParenLeft},
+	{')', TokenType::ParenRight},
+	{'{', TokenType::BraceLeft},
+	{'}', TokenType::BraceRight},
+	{'[', TokenType::BracketLeft},
+	{']', TokenType::BracketRight},
 	{'=', TokenType::Equal},
-	{':', TokenType::TypeConstraintSeparator},
+	{':', TokenType::Colon},
 	{',', TokenType::Separator},
 }};
 
