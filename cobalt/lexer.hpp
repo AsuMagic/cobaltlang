@@ -35,8 +35,6 @@ class Lexer
 
 	void skip(size_t count = 1);
 
-	std::optional<Token> try_tokenize(std::string_view name, TokenType type);
-
 	char next_char();
 
 public:

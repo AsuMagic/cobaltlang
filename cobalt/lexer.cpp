@@ -6,17 +6,23 @@
 
 namespace co
 {
-constexpr std::array<std::pair<std::string_view, TokenType>, 10> basic_tokens {{
-	{"\n", TokenType::EndOfLine},
-	{"(", TokenType::ParameterListBegin},
-	{")", TokenType::ParameterListEnd},
-	{"{", TokenType::FunctionBodyBegin},
-	{"}", TokenType::FunctionBodyEnd},
-	{"[", TokenType::PropertyBodyBegin},
-	{"]", TokenType::PropertyBodyEnd},
-	{"=", TokenType::Equal},
-	{":", TokenType::TypeConstraintSeparator},
-	{",", TokenType::Separator},
+constexpr std::array<std::pair<char, TokenType>, 10> char_tokens {{
+	{'\n', TokenType::EndOfLine},
+	{'(', TokenType::ParameterListBegin},
+	{')', TokenType::ParameterListEnd},
+	{'{', TokenType::FunctionBodyBegin},
+	{'}', TokenType::FunctionBodyEnd},
+	{'[', TokenType::PropertyBodyBegin},
+	{']', TokenType::PropertyBodyEnd},
+	{'=', TokenType::Equal},
+	{':', TokenType::TypeConstraintSeparator},
+	{',', TokenType::Separator},
+}};
+
+constexpr std::array<std::pair<std::string_view, TokenType>, 3> identifier_tokens {{
+	{"return", TokenType::Return},
+	{"break", TokenType::Break},
+	{"continue", TokenType::Continue}
 }};
 
 bool Lexer::is_first_identifier_char(char c)
@@ -90,18 +96,6 @@ void Lexer::skip(size_t count)
 	}
 }
 
-std::optional<Token> Lexer::try_tokenize(std::string_view name, TokenType type)
-{
-	if (match(name))
-	{
-		Token token{type, {_cursor, name.size()}};
-		skip(name.size());
-		return token;
-	}
-
-	return {};
-}
-
 char Lexer::next_char()
 {
 	return *(++_cursor);
@@ -132,30 +126,26 @@ Token Lexer::next_token()
 
 	auto token_begin = _cursor;
 
-	for (auto& t : basic_tokens)
+	for (auto& t : char_tokens)
 	{
-		if (auto token = try_tokenize(t.first, t.second); token)
+		if (match(t.first))
 		{
-			return *token;
+			return Token{t.second, {_cursor++, 1}};
 		}
 	}
 
 	if (is_first_identifier_char(*_cursor))
 	{
 		skip_until([&] { return !is_identifier_char(*_cursor); });
+
 		std::string_view view = make_view(token_begin, _cursor);
 
-		if (view == "return")
+		for (auto& t : identifier_tokens)
 		{
-			return {TokenType::Return, view};
-		}
-		else if (view == "break")
-		{
-			return {TokenType::Break, view};
-		}
-		else if (view == "continue")
-		{
-			return {TokenType::Continue, view};
+			if (view == t.first)
+			{
+				return {t.second, view};
+			}
 		}
 
 		value = std::string{view};
