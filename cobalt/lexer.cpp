@@ -218,8 +218,6 @@ Token Lexer::next_token()
 		return {TokenType::LiteralString, make_view(token_begin, _cursor)};
 	}
 
-	// TODO: handle string
-
 	return {TokenType::Unexpected, {_cursor++, 1}};
 }
 }
