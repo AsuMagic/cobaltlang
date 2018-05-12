@@ -40,6 +40,7 @@ MessageContext get_message_context(Token& token, SourceInfo sinfo)
 		if (*j == '\n')
 		{
 			ctx.source_line = make_view(ctx.source_line.begin(), j);
+			break;
 		}
 	}
 
