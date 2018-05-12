@@ -160,7 +160,7 @@ Token Lexer::next_token()
 	{
 		skip_until([&] { return !isdigit(*_cursor); });
 
-		if (match(".")) // floating point
+		if (match('.')) // floating point
 		{
 			skip(); // skip digit separator '.'
 			skip_until([&] { return !isdigit(*_cursor); });
