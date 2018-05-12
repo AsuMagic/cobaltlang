@@ -12,9 +12,7 @@
 
 namespace co
 {
-using SourceIt = std::string_view::const_iterator;
-
-struct LexerData
+struct TokenValues
 {
 	int value_int = 0;
 	float value_float = 0.0f;
@@ -24,8 +22,8 @@ struct LexerData
 class Lexer
 {
 	std::string_view _source;
-	SourceIt _cursor;
-	LexerData _values;
+	std::string_view::const_iterator _cursor;
+	TokenValues _values;
 
 	static bool is_first_identifier_char(char c);
 	static bool is_identifier_char(char c);

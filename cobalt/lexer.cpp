@@ -116,8 +116,6 @@ Lexer::Lexer(std::string_view source) :
 
 Token Lexer::next_token()
 {
-	// first, skip whitespaces and comments as they are not actual tokens and
-	// only behave as separation
 	skip_until([&]{ return !isspace(*_cursor); });
 
 	if (match("//"))
