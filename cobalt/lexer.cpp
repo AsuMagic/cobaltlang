@@ -2,10 +2,11 @@
 
 #include <algorithm>
 #include <array>
+#include "utility.hpp"
 
 namespace co
 {
-constexpr std::array<std::pair<std::string_view, TokenType>, 13> basic_tokens {{
+constexpr std::array<std::pair<std::string_view, TokenType>, 10> basic_tokens {{
 	{"\n", TokenType::EndOfLine},
 	{"(", TokenType::ParameterListBegin},
 	{")", TokenType::ParameterListEnd},
@@ -16,9 +17,6 @@ constexpr std::array<std::pair<std::string_view, TokenType>, 13> basic_tokens {{
 	{"=", TokenType::Equal},
 	{":", TokenType::TypeConstraintSeparator},
 	{",", TokenType::Separator},
-	{"break", TokenType::Break},
-	{"continue", TokenType::Continue},
-	{"return", TokenType::Return}
 }};
 
 bool Lexer::is_first_identifier_char(char c)
@@ -132,6 +130,8 @@ Token Lexer::next_token()
 		return {TokenType::EndOfFile, {_cursor, 1}};
 	}
 
+	auto token_begin = _cursor;
+
 	for (auto& t : basic_tokens)
 	{
 		if (auto token = try_tokenize(t.first, t.second); token)
@@ -142,13 +142,45 @@ Token Lexer::next_token()
 
 	if (is_first_identifier_char(*_cursor))
 	{
-		auto begin = _cursor;
 		skip_until([&] { return !is_identifier_char(*_cursor); });
-		_values.value_string = {begin, _cursor};
-		return {TokenType::Identifier, {begin, _values.value_string.size()}};
+		std::string_view view = make_view(token_begin, _cursor);
+
+		if (view == "return")
+		{
+			return {TokenType::Return, view};
+		}
+		else if (view == "break")
+		{
+			return {TokenType::Break, view};
+		}
+		else if (view == "continue")
+		{
+			return {TokenType::Continue, view};
+		}
+
+		value = std::string{view};
+		return {TokenType::Identifier, view};
 	}
 
-	// TODO: handle literals
+	if (isdigit(*_cursor)) // numeric literal
+	{
+		skip_until([&] { return !isdigit(*_cursor); });
+
+		if (match(".")) // floating point
+		{
+			skip(); // skip digit separator '.'
+			skip_until([&] { return !isdigit(*_cursor); });
+			value = std::stod(std::string{token_begin, _cursor});
+			return {TokenType::LiteralFloat, make_view(token_begin, _cursor)};
+		}
+		else
+		{
+			value = std::stoll(std::string{token_begin, _cursor});
+			return {TokenType::LiteralInt, make_view(token_begin, _cursor)};
+		}
+	}
+
+	// TODO: handle string
 
 	return {TokenType::Unexpected, {_cursor++, 1}};
 }

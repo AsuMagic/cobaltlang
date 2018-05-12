@@ -12,18 +12,10 @@
 
 namespace co
 {
-struct TokenValues
-{
-	int value_int = 0;
-	float value_float = 0.0f;
-	std::string value_string;
-};
-
 class Lexer
 {
 	std::string_view _source;
 	std::string_view::const_iterator _cursor;
-	TokenValues _values;
 
 	static bool is_first_identifier_char(char c);
 	static bool is_identifier_char(char c);
@@ -48,6 +40,8 @@ class Lexer
 	char next_char();
 
 public:
+	std::variant<long long, double, std::string> value;
+
 	Lexer(std::string_view source);
 
 	Token next_token();

@@ -8,12 +8,15 @@ int main()
 		"/* this is a multiline comment\n"
 		"   test */\n"
 		"~ // invalid line because of bad token\n"
-		"f := (x : int) {return x * x}\n"
+		"f := (x : int) {return 42 + 3.05 * x}\n"
 	};
 
 	co::Token tok;
 	while ((tok = lex.next_token()).type != co::TokenType::EndOfFile)
 	{
-		std::cout << "token: '" << tok.view << "', type = " << int(tok.type) << '\n';
+		std::cout << "token: '" << tok.view << "', type = " << int(tok.type) <<
+			/*", intval = " << lex.value_int <<
+			", floatval = " << lex.value_int <<
+			", stringval = " << lex.value_string << */'\n';
 	}
 }
