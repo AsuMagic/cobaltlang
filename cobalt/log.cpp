@@ -49,13 +49,11 @@ MessageContext get_message_context(Token& token, SourceInfo sinfo)
 
 void log_message_header(Token* token, SourceInfo source, std::string_view type)
 {
-	std::cout << '\n';
-
 	if (token)
 	{
 		auto ctx = get_message_context(*token, source);
 
-		std::cout << ctx.source_line << '\n';
+		std::cout << '\n' << ctx.source_line << '\n';
 
 		for (unsigned i = 0; i < ctx.column; ++i)
 		{
