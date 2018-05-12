@@ -9,6 +9,8 @@ enum class TokenType
 {
 	EndOfFile,
 
+	Unexpected,
+
 	// typically used to separate statements
 	EndOfLine,
 
@@ -54,9 +56,8 @@ struct Token
 {
 	TokenType type;
 
-	// TODO: use type def from lexer.hpp, make some stuff common?
-	// offset within the source file
-	std::string_view::const_iterator offset;
+	// view of the token within the source file
+	std::string_view view;
 };
 }
 

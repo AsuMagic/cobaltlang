@@ -7,11 +7,7 @@ namespace co
 {
 bool Lexer::is_first_identifier_char(char c)
 {
-	constexpr std::string_view extra = "+-*/%&|><!^";
-
-	c = tolower(c);
-	return isalpha(c)
-		|| std::find(extra.begin(), extra.end(), c) != extra.end();
+	return isalpha(c);
 }
 
 bool Lexer::is_identifier_char(char c)
@@ -105,12 +101,12 @@ Lexer::Lexer(std::string_view source) :
 Token Lexer::next_token()
 {
 	Token token{};
-	token.offset = _cursor;
 
 	auto token_check = [&](std::string_view name, TokenType type) {
 		if (match(name))
 		{
 			token.type = type;
+			token.view = {_cursor, name.size()};
 			skip(name.size());
 			return true;
 		}
@@ -130,6 +126,8 @@ Token Lexer::next_token()
 	{
 		skip_beyond("*/");
 	}
+
+	token.view = {_cursor, 1};
 
 	if (eof())
 	{
@@ -170,12 +168,15 @@ Token Lexer::next_token()
 		auto begin = _cursor;
 		skip_until([&] { return !is_identifier_char(*_cursor); });
 		_values.value_string = {begin, _cursor};
+		token.view = {begin, size_t(std::distance(begin, _cursor))};
 		token.type = TokenType::Identifier;
 		return token;
 	}
 
 	// TODO: handle literals
 
+	token.type = TokenType::Unexpected;
+	skip();
 	return token;
 }
 }

@@ -10,6 +10,6 @@ int main()
 	co::Token tok;
 	while ((tok = lex.next_token()).type != co::TokenType::EndOfFile)
 	{
-		std::cout << "rest: '" << &(*tok.offset) << "', type = " << int(tok.type) << '\n';
+		std::cout << "token: '" << tok.view << "', type = " << int(tok.type) << '\n';
 	}
 }
