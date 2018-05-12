@@ -12,9 +12,16 @@
 
 namespace co
 {
+struct SourceInfo
+{
+	std::string_view source, source_fname;
+};
+
 class Lexer
 {
-	std::string_view _source;
+	SourceInfo _source_info;
+	std::string_view _source; // points to _source_info.source for convenience
+
 	std::string_view::const_iterator _cursor;
 
 	static bool is_first_identifier_char(char c);
@@ -38,9 +45,13 @@ class Lexer
 	char next_char();
 
 public:
-	std::variant<long long, double, std::string> value;
+	using IntegerValue = long long;
+	using FloatValue = double;
+	using StringValue = std::string;
 
-	Lexer(std::string_view source);
+	std::variant<IntegerValue, FloatValue, StringValue> value;
+
+	Lexer(SourceInfo source);
 
 	Token next_token();
 };

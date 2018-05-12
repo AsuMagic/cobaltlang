@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include "utility.hpp"
+#include "log.hpp"
 
 namespace co
 {
@@ -109,9 +110,10 @@ char Lexer::next_char()
 	return *(++_cursor);
 }
 
-Lexer::Lexer(std::string_view source) :
-	_source{source},
-	_cursor{source.begin()}
+Lexer::Lexer(SourceInfo source) :
+	_source_info{source},
+	_source{source.source},
+	_cursor{_source.begin()}
 {}
 
 Token Lexer::next_token()
@@ -168,13 +170,28 @@ Token Lexer::next_token()
 		{
 			skip(); // skip digit separator '.'
 			skip_until([&] { return !isdigit(*_cursor); });
+
+			Token token{TokenType::LiteralFloat, make_view(token_begin, _cursor)};
+
 			value = std::stod(std::string{token_begin, _cursor});
-			return {TokenType::LiteralFloat, make_view(token_begin, _cursor)};
+			return token;
 		}
 		else
 		{
-			value = std::stoll(std::string{token_begin, _cursor});
-			return {TokenType::LiteralInt, make_view(token_begin, _cursor)};
+			Token token{TokenType::LiteralInt, make_view(token_begin, _cursor)};
+
+			try
+			{
+				value = std::stoll(std::string{token_begin, _cursor});
+			}
+			catch (std::out_of_range& e)
+			{
+				warning(&token, _source_info) <<
+					"Integer out of range, assuming zero.\n";
+				value = IntegerValue(0);
+			}
+
+			return token;
 		}
 	}
 
