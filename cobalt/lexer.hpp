@@ -4,7 +4,9 @@
 #include <functional>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <variant>
+#include <vector>
 #include "token.hpp"
 
 namespace co
@@ -32,15 +34,17 @@ class Lexer
 	bool match(std::string_view substring) const;
 	bool match(char c) const;
 
-	void skip_until(const std::function<bool()>& termination_condition);
-	void skip_until(char termination_char);
-	void skip_until(std::string_view termination_string);
+	void skip_until(const std::function<bool()>& stop_condition);
+	void skip_until(char stop_char);
+	void skip_until(std::string_view stop_string);
 
-	void skip_beyond(const std::function<bool()>& termination_condition);
-	void skip_beyond(char termination_char);
-	void skip_beyond(std::string_view termination_string);
+	void skip_beyond(const std::function<bool()>& stop_condition);
+	void skip_beyond(char stop_char);
+	void skip_beyond(std::string_view stop_string);
 
 	void skip(size_t count = 1);
+
+	bool try_token(Token& token, std::string_view name, TokenType type);
 
 	char next_char();
 

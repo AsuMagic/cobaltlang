@@ -4,7 +4,8 @@
 int main()
 {
 	co::Lexer lex{
-		"f := (x : int){return x * x}"
+		"a : int = 3\n"
+		"f := (x : int) {return x * x}\n"
 	};
 
 	co::Token tok;

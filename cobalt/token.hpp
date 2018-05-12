@@ -40,8 +40,9 @@ enum class TokenType
 	// i.e. type constraint, value constraint or custom function constraint
 	TypeConstraintSeparator,
 
-	// equal '=' used to assign variables or declare-assign variables
-	Assign,
+	// equal '=' used to assign variables or declare-assign variables or if the
+	// context allows as an identifier character
+	Equal,
 
 	// flow control instructions
 	Break,
