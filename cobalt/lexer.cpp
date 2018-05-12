@@ -23,13 +23,8 @@ bool Lexer::eof() const
 
 bool Lexer::match(std::string_view substring) const
 {
-	if (size_t(std::distance(_cursor, _source.end())) >= substring.size()
-	 && std::equal(_cursor, _cursor + substring.size(), substring.begin(), substring.end()))
-	{
-		return true;
-	}
-
-	return false;
+	return size_t(std::distance(_cursor, _source.end())) >= substring.size()
+		&& substring == std::string_view{_cursor, substring.size()};
 }
 
 bool Lexer::match(char c) const
@@ -39,15 +34,10 @@ bool Lexer::match(char c) const
 
 void Lexer::skip_until(const std::function<bool()>& termination_condition)
 {
-	// TODO: make this cleaner
-
-	if (eof() || termination_condition())
+	while (!eof() && !termination_condition())
 	{
-		return;
+		++_cursor;
 	}
-
-	while (++_cursor != _source.end()
-		&& !termination_condition());
 }
 
 void Lexer::skip_until(char termination_char)
@@ -80,12 +70,10 @@ void Lexer::skip_beyond(std::string_view termination_string)
 
 void Lexer::skip(size_t count)
 {
-	if (eof())
+	if (!eof())
 	{
-		return;
+		_cursor += count;
 	}
-
-	_cursor += count;
 }
 
 char Lexer::next_char()
