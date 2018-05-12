@@ -17,6 +17,10 @@ struct SourceInfo
 	std::string_view source, source_fname;
 };
 
+using IntegerValue = long long;
+using FloatValue = double;
+using StringValue = std::string;
+
 class Lexer
 {
 	SourceInfo _source_info;
@@ -43,17 +47,15 @@ class Lexer
 	void skip(size_t count = 1);
 
 	char next_char();
+	Token next_token();
 
 public:
-	using IntegerValue = long long;
-	using FloatValue = double;
-	using StringValue = std::string;
-
 	std::variant<IntegerValue, FloatValue, StringValue> value;
+	Token last_token;
 
 	Lexer(SourceInfo source);
 
-	Token next_token();
+	Token& token();
 };
 }
 

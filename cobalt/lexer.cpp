@@ -110,12 +110,6 @@ char Lexer::next_char()
 	return *(++_cursor);
 }
 
-Lexer::Lexer(SourceInfo source) :
-	_source_info{source},
-	_source{source.source},
-	_cursor{_source.begin()}
-{}
-
 Token Lexer::next_token()
 {
 	skip_until([&]{ return !isspace(*_cursor); });
@@ -236,5 +230,16 @@ Token Lexer::next_token()
 	}
 
 	return {TokenType::Unexpected, {_cursor++, 1}};
+}
+
+Lexer::Lexer(SourceInfo source) :
+	_source_info{source},
+	_source{source.source},
+	_cursor{_source.begin()}
+{}
+
+Token& Lexer::token()
+{
+	return (last_token = next_token());
 }
 }
