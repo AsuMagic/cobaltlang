@@ -3,13 +3,17 @@
 
 int main()
 {
-	co::Lexer lex{
-		"a : int = 3 // this shall be ignored\n"
+	auto src =
+		"s : int = 3 // this shall be ignored\n"
+		"a := \"hi\\\"\"\n"
 		"/* this is a multiline comment\n"
 		"   test */\n"
 		"~ // invalid line because of bad token\n"
-		"f := (x : int) {return 42 + 3.05 * x}\n"
-	};
+		"f := (x : int) {return 42 + 3.05 * x}";
+
+	co::Lexer lex{src};
+
+	std::cout << "=== SOURCE ===\n" << src << "\n=== END SOURCE ===\n\n";
 
 	co::Token tok;
 	while ((tok = lex.next_token()).type != co::TokenType::EndOfFile)

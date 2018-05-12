@@ -25,6 +25,14 @@ constexpr std::array<std::pair<std::string_view, TokenType>, 3> identifier_token
 	{"continue", TokenType::Continue}
 }};
 
+constexpr std::array<std::pair<std::string_view, char>, 5> string_escapes {{
+	{R"(\n)", '\r'},
+	{R"(\n)", '\n'},
+	{R"(\t)", '\t'},
+	{R"(\\)", '\\'},
+	{R"(\")",  '"'}
+}};
+
 bool Lexer::is_first_identifier_char(char c)
 {
 	return isalpha(c);
@@ -168,6 +176,46 @@ Token Lexer::next_token()
 			value = std::stoll(std::string{token_begin, _cursor});
 			return {TokenType::LiteralInt, make_view(token_begin, _cursor)};
 		}
+	}
+
+	if (match('"'))
+	{
+		std::string str;
+
+		skip();
+		while (!eof())
+		{
+			bool has_escaped = false;
+			for (auto& p : string_escapes)
+			{
+				if (match(p.first))
+				{
+					str += p.second;
+					skip(p.first.size());
+					has_escaped = true;
+				}
+			}
+
+			if (has_escaped)
+			{
+				continue;
+			}
+
+			if (match('"'))
+			{
+				skip();
+				break;
+			}
+			else
+			{
+				str += *_cursor;
+				skip();
+			}
+		}
+
+		value = str;
+
+		return {TokenType::LiteralString, make_view(token_begin, _cursor)};
 	}
 
 	// TODO: handle string
