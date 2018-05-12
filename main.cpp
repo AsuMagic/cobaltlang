@@ -4,7 +4,10 @@
 int main()
 {
 	co::Lexer lex{
-		"a : int = 3\n"
+		"a : int = 3 // this shall be ignored\n"
+		"/* this is a multiline comment\n"
+		"   test */\n"
+		"~ // invalid line because of bad token\n"
 		"f := (x : int) {return x * x}\n"
 	};
 

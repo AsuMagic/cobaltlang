@@ -92,17 +92,16 @@ void Lexer::skip(size_t count)
 	}
 }
 
-bool Lexer::try_token(Token& token, std::string_view name, TokenType type)
+std::optional<Token> Lexer::try_tokenize(std::string_view name, TokenType type)
 {
 	if (match(name))
 	{
-		token.type = type;
-		token.view = {_cursor, name.size()};
+		Token token{type, {_cursor, name.size()}};
 		skip(name.size());
-		return true;
+		return token;
 	}
 
-	return false;
+	return {};
 }
 
 char Lexer::next_char()
@@ -117,8 +116,6 @@ Lexer::Lexer(std::string_view source) :
 
 Token Lexer::next_token()
 {
-	Token token{};
-
 	// first, skip whitespaces and comments as they are not actual tokens and
 	// only behave as separation
 	skip_until([&]{ return !isspace(*_cursor); });
@@ -132,19 +129,16 @@ Token Lexer::next_token()
 		skip_beyond("*/");
 	}
 
-	// default to a one character token
-	token.view = {_cursor, 1};
-
 	if (eof())
 	{
-		return token;
+		return {TokenType::EndOfFile, {_cursor, 1}};
 	}
 
 	for (auto& t : basic_tokens)
 	{
-		if (try_token(token, t.first, t.second))
+		if (auto token = try_tokenize(t.first, t.second); token)
 		{
-			return token;
+			return *token;
 		}
 	}
 
@@ -153,15 +147,11 @@ Token Lexer::next_token()
 		auto begin = _cursor;
 		skip_until([&] { return !is_identifier_char(*_cursor); });
 		_values.value_string = {begin, _cursor};
-		token.view = {begin, size_t(std::distance(begin, _cursor))};
-		token.type = TokenType::Identifier;
-		return token;
+		return {TokenType::Identifier, {begin, _values.value_string.size()}};
 	}
 
 	// TODO: handle literals
 
-	token.type = TokenType::Unexpected;
-	skip();
-	return token;
+	return {TokenType::Unexpected, {_cursor++, 1}};
 }
 }

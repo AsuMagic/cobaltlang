@@ -2,6 +2,7 @@
 #define LEXER_HPP
 
 #include <functional>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -44,7 +45,7 @@ class Lexer
 
 	void skip(size_t count = 1);
 
-	bool try_token(Token& token, std::string_view name, TokenType type);
+	std::optional<Token> try_tokenize(std::string_view name, TokenType type);
 
 	char next_char();
 
