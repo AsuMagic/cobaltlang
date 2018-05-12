@@ -180,7 +180,7 @@ Token Lexer::next_token()
 			}
 			catch (std::out_of_range& e)
 			{
-				warning(&token, _source_info) <<
+				warning(&token, source_info) <<
 					"Integer out of range, assuming zero.\n";
 				value = IntegerValue(0);
 			}
@@ -233,9 +233,9 @@ Token Lexer::next_token()
 }
 
 Lexer::Lexer(SourceInfo source) :
-	_source_info{source},
 	_source{source.source},
-	_cursor{_source.begin()}
+	_cursor{_source.begin()},
+	source_info{source}
 {}
 
 Token& Lexer::token()

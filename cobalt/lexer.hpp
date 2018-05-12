@@ -23,7 +23,6 @@ using StringValue = std::string;
 
 class Lexer
 {
-	SourceInfo _source_info;
 	std::string_view _source; // points to _source_info.source for convenience
 
 	std::string_view::const_iterator _cursor;
@@ -50,6 +49,7 @@ class Lexer
 	Token next_token();
 
 public:
+	SourceInfo source_info;
 	std::variant<IntegerValue, FloatValue, StringValue> value;
 	Token last_token;
 

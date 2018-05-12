@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 project(cobalt)
 add_executable(cobalt
 	"main.cpp"
+	"cobalt/ast/expr/call.cpp"
+	"cobalt/ast/expr/identifier.cpp"
+	"cobalt/ast/expr/integer.cpp"
 	"cobalt/lexer.cpp"
-	"cobalt/log.cpp")
+	"cobalt/log.cpp"
+)
 
 target_compile_options(cobalt PRIVATE -Wall -Wextra -std=c++17)
